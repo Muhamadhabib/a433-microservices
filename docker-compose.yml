@@ -1,0 +1,35 @@
+# schema version dari docker compose
+version: "3.7"
+
+# untuk membuat service
+services:
+  # membuat service database bernama item-db
+  item-db:
+    # menggunakan docker image database mongo versi 3  
+    image: mongo:3
+    # melakukan restart bila service dalam kondisi mati
+    restart: always
+    # port yang digunakan
+    ports:
+      - 27017:27017
+    # menggunakan volume app-db dengan target /data/db
+    volumes:
+      - app-db:/data/db
+  # membuat service app bernama item-app
+  item-app:
+    # service berjalan jika service item-db telah dijalankan
+    depends_on:
+      - item-db
+    # menggunakan docker image app item-app dari repo docker hub
+    image: muha13/item-app:v1
+    # melakukan restart bila service dalam kondisi mati
+    restart: always
+    # port yang digunakan
+    ports:
+      - 80:8080
+    # menggunakan volume untuk menentukan working directory ke /app
+    volumes:
+      - ./:/app
+# volume bernama app-db
+volumes:
+  app-db:
